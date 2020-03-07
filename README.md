@@ -3,9 +3,11 @@ ArduinoLog - C++ Log library for Arduino devices
 [![Build Status](https://travis-ci.org/thijse/Arduino-Log.svg?branch=master)](https://travis-ci.org/thijse/Arduino-Log)
 [![License](https://img.shields.io/badge/license-MIT%20License-blue.svg)](http://doge.mit-license.org)
 
-*An minimalistic Logging framework  for Arduino-compatible embedded systems.*
+:exclamation: This is forked from [thijse](https://github.com/thijse) / [Arduino-Log](https://github.com/thijse/Arduino-Log) (which in turn was forked from [mrRobot62](https://github.com/mrRobot62) / [Arduino-logging-library](https://github.com/mrRobot62/Arduino-logging-library)).  I did so because I rely upon it in my projects, and let's face it - sometimes things go away.
 
-ArduinoLog is a minimalistic framework to help the programmer output log statements to an output of choice, fashioned after extensive logging libraries such as log4cpp ,log4j and log4net. In case of problems with an application, it is helpful to enable logging so that the problem can be located. ArduinoLog is designed so that log statements can remain in the code with minimal performance cost. In order to facilitate this the loglevel can be adjusted, and (if your code is completely tested) all logging code can be compiled out. 
+*An minimalistic Logging framework for Arduino-compatible embedded systems.*
+
+ArduinoLog is a minimalistic framework to help the programmer output log statements to an output of choice, fashioned after extensive logging libraries such as log4cpp ,log4j, and log4net. In case of problems with an application, it is helpful to enable logging so that you may locate the problem. ArduinoLog is designed so that log statements can remain in the code with minimal performance cost. In order to facilitate this, you may adjust the loglevel, and (once you thoroughly test your code,) all logging code can be compiled out. 
 
 ## Features
 
@@ -18,12 +20,13 @@ ArduinoLog is a minimalistic framework to help the programmer output log stateme
 
 ## Tested for 
 
-* All Arduino boards (Uno, Due, Mini, Micro, Yun...)
+* All Arduino boards (Uno, Due, Mini, Micro, Yun, and others)
 * ESP8266
+* ESP32
 
 ## Downloading
 
-This package has been published to the Arduino & PlatformIO package managers, but you can also download it from GitHub. 
+[thijse](https://github.com/thijse) published his version of this library to the Arduino & PlatformIO package managers, but you can also download it from GitHub. 
 
 - By directly loading fetching the Archive from GitHub: 
  1. Go to [https://github.com/thijse/Arduino-Log](https://github.com/thijse/Arduino-Log)
@@ -35,7 +38,7 @@ This package has been published to the Arduino & PlatformIO package managers, bu
  6. For more information, [read this extended manual](http://thijs.elenbaas.net/2012/07/installing-an-arduino-library/)
 
 
-## Quick start
+## Quickstart
 
 ```c++
     Serial.begin(9600);
@@ -54,15 +57,15 @@ This package has been published to the Arduino & PlatformIO package managers, bu
 
 ### Initialisation
 
-The log library needs to be initialized with the log level of messages to show and the log output. The latter will often be the Serial interface.
-Optionally, you can indicate whether to show the log type (error, debug, etc) for each line.
+The logging library needs to be initialized with the log level of messages to show and the log output. The latter is often the Serial interface.
+Optionally, you can indicate whether to show the log type (error, debug, others) for each line.
 
 ```
 begin(int level, Print* logOutput, bool showLevel)
 begin(int level, Print* logOutput)
 ```
 
-The loglevels available are
+The log levels available are
 
 ```
 * 0 - LOG_LEVEL_SILENT     no output 
@@ -80,11 +83,11 @@ example
     Log.begin(LOG_LEVEL_ERROR, &Serial, true);
 ```
 
-if you want to fully remove all logging code, uncomment `#define DISABLE_LOGGING` in `ArduinoLog.h`, this may significantly reduce your sketch/library size.
+if you want to delete all logging code, uncomment `#define DISABLE_LOGGING` in `ArduinoLog.h`, doing so may significantly reduce your sketch/library size.
 
 ### Log events
 
-The library allows you to log on different levels by the following functions
+The library allows you to log on different levels by the following functions:
 
 ```c++
 void fatal   (const char *format, va_list logVariables); 
@@ -95,63 +98,63 @@ void trace   (const char *format, va_list logVariables);
 void verbose (const char *format, va_list logVariables);
 ```
 
-where the format string can be used to format the log variables
+You may use the following format strings to format the log variables:
 
 ```
-* %s	display as string (char*)
-* %S    display as string from flash memory (__FlashStringHelper* or char[] PROGMEM)
-* %c	display as single character
-* %d	display as integer value
-* %l	display as long value
-* %x	display as hexadecimal value
-* %X	display as hexadecimal value prefixed by `0x`
-* %b	display as  binary number
-* %B	display as  binary number, prefixed by `0b'
-* %t	display as boolean value "t" or "f"
-* %T	display as boolean value "true" or "false"
-* %D,%F display as double value
+* %s    display as a string (char*)
+* %S    display as astring from flash memory (__FlashStringHelper* or char[] PROGMEM)
+* %c    display as a single character
+* %d    display as an integer value
+* %l    display as a long value
+* %x    display as a hexadecimal value
+* %X    display as a hexadecimal value prefixed by `0x`
+* %b    display as a binary number
+* %B    display as a binary number, prefixed by `0b'
+* %t    display as a boolean value "t" or "f"
+* %T    display as a boolean value "true" or "false"
+* %D,%F display as a double value
 ```
 
- Newlines can be added using the CR keyword or by using the ...ln version of each of the log functions.
+You can add new lines using the `CR` keyword or by using the *ln version of each of the log functions.
 
 ### Storing messages in Flash memory
 
-Flash strings log variables can be stored and reused at several places to reduce final hex size.
+Flash strings log variables can be stored and reused at several places to reduce the final hex size.
 
 ```c++
     const __FlashStringHelper * logAs = F("Log as");
-    Log.fatal   (F("%S Fatal   with string value from Flash   : %s"CR    ) , logAs, "value"     );
-    Log.error   (  "%S Error   with binary values             : %b, %B"CR  , logAs, 23  , 345808);
+    Log.fatal   (F("%S Fatal   with string value from Flash   : %s" CR    ) , logAs, "value"     );
+    Log.error   (  "%S Error   with binary values             : %b, %B" CR  , logAs, 23  , 345808);
 ```
 
-If you want to declare that string globally (outside of a function), you will need to use the PROGMEM macro instead.
+If you want to declare that string globally (outside of a function), you must use the PROGMEM macro instead.
 
 ```c++
 const char LOG_AS[] PROGMEM = "Log as ";
 
 void logError() {
-    Log.error   (  "%S Error   with binary values             : %b, %B"CR  , PSTRPTR(LOG_AS), 23  , 345808);
+    Log.error   (  "%S Error   with binary values             : %b, %B" CR  , PSTRPTR(LOG_AS), 23  , 345808);
 }
 ```
 
 ### Examples
 
 ```c++
-    Log.fatal     (F("Log as Fatal   with string value from Flash   : %s"CR    ) , "value"     );
+    Log.fatal     (F("Log as Fatal   with string value from Flash   : %s" CR    ) , "value"     );
     Log.errorln   (  "Log as Error   with binary values             : %b, %B"    , 23  , 345808);
-    Log.warning   (F("Log as Warning with integer values from Flash : %d, %d"CR) , 34  , 799870);
-    Log.notice    (  "Log as Notice  with hexadecimal values        : %x, %X"CR  , 21  , 348972);
-    Log.trace     (  "Log as Trace   with Flash string              : %S"CR    ) , F("value")  );
+    Log.warning   (F("Log as Warning with integer values from Flash : %d, %d" CR) , 34  , 799870);
+    Log.notice    (  "Log as Notice  with hexadecimal values        : %x, %X" CR  , 21  , 348972);
+    Log.trace     (  "Log as Trace   with Flash string              : %S" CR    ) , F("value")  );
     Log.verboseln (F("Log as Verbose with bool value from Flash     : %t, %T"  ) , true, false );
 ```
 
 ### Disable library
 
-(if your code is completely tested) all logging code can be compiled out. Do this by uncommenting  
+(Once you have thoroughly tested your code) you may compile out all logging code. Do this by uncommenting:
 ```c++
 #define DISABLE_LOGGING 
 ```
-in `Logging.h`. This may significantly reduce your project size.
+in `Logging.h`. Doing so may significantly reduce your project size.
 
 ## Credit
 
@@ -165,7 +168,6 @@ Bugfixes & features by
 * [Jos Hanon](https://github.com/Josha)
 * [Bertrand Lemasle](https://github.com/blemasle)
 * [Mikael Falkvidd](https://github.com/mfalkvidd)
-
 
 ## On using and modifying libraries
 
